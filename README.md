@@ -549,7 +549,10 @@ We will start building the backend for our plugin in the coming sections. But, f
 
 We will test our API before tying our Admin (frontend) and Server (backend) portions of our plugin.
 
-# plugin-dev-101-strapi-v4-complete
+
+
+
+
 
 # [ VIDEO 5 Notes ] Routes Controllers and Services
 
