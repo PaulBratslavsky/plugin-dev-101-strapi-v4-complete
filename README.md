@@ -236,7 +236,6 @@ This is what our plugin page should look like. Before connecting the "Add your f
 
 <img width="1510" alt="emtystateview" src="https://user-images.githubusercontent.com/6153188/170054642-bd43189b-6b3c-4f43-a15b-63020736b408.png">
 
-
 ## Add todo modal component
 
 We are making progress—a few things left in terms of our UI. Let's keep going.
@@ -549,4 +548,188 @@ We finished our basic frontend UI; what's next?
 We will start building the backend for our plugin in the coming sections. But, first, we will create our content-types, then implement routes, services, and controllers.
 
 We will test our API before tying our Admin (frontend) and Server (backend) portions of our plugin.
+
 # plugin-dev-101-strapi-v4-complete
+
+# [ VIDEO 5 Notes ] Routes Controllers and Services
+
+# Outline
+
+- Introduction
+- Routes code snippets
+- Controller code snippets
+- Services code snippets
+
+# Introduction
+
+In this video, we will go over how to create routes, controllers, and services for our plugin's backend. We will also learn about using Strapi Entity Service for communicating with the database.
+
+## Routes Code Snippets
+
+Here are the custom routes that we have created.
+
+`plugins/todo/server/routes/index.js`
+
+```javascript
+module.exports = [
+  {
+    method: "GET",
+    path: "/",
+    handler: "myController.index",
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+
+  {
+    method: "GET",
+    path: "/find",
+    handler: "todo.find",
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+
+  {
+    method: "POST",
+    path: "/create",
+    handler: "todo.create",
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+
+  {
+    method: "DELETE",
+    path: "/delete/:id",
+    handler: "todo.delete",
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+
+  {
+    method: "PUT",
+    path: "/toggle/:id",
+    handler: "todo.toggle",
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+
+  {
+    method: "PUT",
+    path: "/update/:id",
+    handler: "todo.update",
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+];
+```
+
+## Controllers Code Snippets
+
+Here are the custom controllers that we have created.
+
+`plugins/todo/server/controllers/todo.js`
+
+```javascript
+"use strict";
+
+module.exports = {
+  async find(ctx) {
+    try {
+      return await strapi.plugin("todo").service("todo").find(ctx.query);
+    } catch (err) {
+      ctx.throw(500, err);
+    }
+  },
+
+  async delete(ctx) {
+    try {
+      ctx.body = await strapi
+        .plugin("todo")
+        .service("todo")
+        .delete(ctx.params.id);
+    } catch (err) {
+      ctx.throw(500, err);
+    }
+  },
+
+  async create(ctx) {
+    try {
+      ctx.body = await strapi
+        .plugin("todo")
+        .service("todo")
+        .create(ctx.request.body);
+    } catch (err) {
+      ctx.throw(500, err);
+    }
+  },
+
+  async update(ctx) {
+    try {
+      ctx.body = await strapi
+        .plugin("todo")
+        .service("todo")
+        .update(ctx.params.id, ctx.request.body);
+    } catch (err) {
+      ctx.throw(500, err);
+    }
+  },
+
+  async toggle(ctx) {
+    try {
+      ctx.body = await strapi
+        .plugin("todo")
+        .service("todo")
+        .toggle(ctx.params.id);
+    } catch (err) {
+      ctx.throw(500, err);
+    }
+  },
+};
+```
+
+## Services Code Snippets
+
+Here are the custom controllers that we have created.
+
+`plugins/todo/server/servicese/todo.js`
+
+```javascript
+"use strict";
+
+module.exports = ({ strapi }) => ({
+  async find(query) {
+    return await strapi.entityService.findMany("plugin::todo.todo", query);
+  },
+
+  async delete(id) {
+    return await strapi.entityService.delete("plugin::todo.todo", id);
+  },
+
+  async create(data) {
+    return await strapi.entityService.create("plugin::todo.todo", data);
+  },
+
+  async update(id, data) {
+    return await strapi.entityService.update("plugin::todo.todo", id, data);
+  },
+
+  async toggle(id) {
+    const result = await strapi.entityService.findOne("plugin::todo.todo", id);
+
+    return await strapi.entityService.update("plugin::todo.todo", id, {
+      data: { isDone: !result.isDone },
+    });
+  },
+});
+```
