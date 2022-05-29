@@ -12,8 +12,8 @@
   },
 
   "pluginOptions": {
-    "content-manager": {
-      "visible": true
+    "content-manager": { 
+      "visible": false
     },
 
     "content-type-builder": {

@@ -549,11 +549,6 @@ We will start building the backend for our plugin in the coming sections. But, f
 
 We will test our API before tying our Admin (frontend) and Server (backend) portions of our plugin.
 
-
-
-
-
-
 # [ VIDEO 5 Notes ] Routes Controllers and Services
 
 # Outline
@@ -735,4 +730,105 @@ module.exports = ({ strapi }) => ({
     });
   },
 });
+```
+
+# [ VIDEO 6 Notes ] Making API Requests from Admin API
+
+# Outline
+
+- Introduction
+- API Request Methods
+- Refactored Functions
+
+# Introduction
+
+In this video, we will finish up our todo plugin by connectig the backend and fronend functionality by learning how to make backend request from admin API.
+
+## API Request Methods
+
+`plugins/todo/admin/src/api/todo.js`
+
+```javascript
+import { request } from "@strapi/helper-plugin";
+
+const todoRequests = {
+  getAllTodos: async () => {
+    return await request("/todo/find", {
+      method: "GET",
+    });
+  },
+
+  addTodo: async (data) => {
+    return await request(`/todo/create`, {
+      method: "POST",
+
+      body: { data: data },
+    });
+  },
+
+  toggleTodo: async (id) => {
+    return await request(`/todo/toggle/${id}`, {
+      method: "PUT",
+    });
+  },
+
+  editTodo: async (id, data) => {
+    return await request(`/todo/update/${id}`, {
+      method: "PUT",
+
+      body: { data: data },
+    });
+  },
+
+  deleteTodo: async (id) => {
+    return await request(`/todo/delete/${id}`, {
+      method: "DELETE",
+    });
+  },
+};
+
+export default todoRequests;
+```
+
+## Refactored Functions
+
+`plugins/todo/admin/src/pages/HomePage/index.js`
+
+```javascript
+// ...
+const [isLoading, setIsLoading] = useState(true);
+
+const fetchData = async () => {
+  if (isLoading === false) setIsLoading(true);
+
+  const todo = await todoRequests.getAllTodos();
+  setTodoData(todo);
+  setIsLoading(false);
+};
+
+useEffect(async () => {
+  await fetchData();
+}, []);
+
+async function addTodo(data) {
+  await todoRequests.addTodo(data);
+  await fetchData();
+}
+
+async function toggleTodo(data) {
+  await todoRequests.toggleTodo(data.id);
+}
+
+async function deleteTodo(data) {
+  await todoRequests.deleteTodo(data.id);
+  await fetchData();
+}
+
+async function editTodo(id, data) {
+  await todoRequests.editTodo(id, data);
+  await fetchData();
+}
+
+if (isLoading) return <LoadingIndicatorPage />;
+// ...
 ```
