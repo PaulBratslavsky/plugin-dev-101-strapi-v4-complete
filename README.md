@@ -1,6 +1,6 @@
-# 3 Building out frontend of our plugin using Strapi Design System.
+# [ VIDEO 3 Notes ] Building out frontend of our plugin using Strapi Design System.
 
-# Outline
+## Outline
 
 - Introduction
 - Buidling the frontend
