@@ -742,7 +742,7 @@ module.exports = ({ strapi }) => ({
 
 # Introduction
 
-In this video, we will finish up our todo plugin by connectig the backend and fronend functionality by learning how to make backend request from admin API.
+In this video, we will finish up our todo plugin by connecting the backend and frontend functionality by learning how to make backend requests from admin API.
 
 ## API Request Methods
 
