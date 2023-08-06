@@ -29,14 +29,24 @@ const HomePage = () => {
 
   const fetchData = async () => {
     if (isLoading === false) setIsLoading(true);
-    const todo = await todoRequests.getAllTodos();
-    setTodoData(todo);
-    setIsLoading(false);
-  }
 
-  useEffect(async () => {
-    await fetchData();
-  },[])
+    try {
+      const todo = await todoRequests.getAllTodos();
+      setTodoData(todo);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const initFetchData = async () => {
+      await fetchData();
+    };
+
+    initFetchData();
+  }, []);
 
   async function addTodo(data) {
     await todoRequests.addTodo(data);
